@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design System Audit Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #181818;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            color: #00249e;
+        }
+        
+        h2 {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: #004ace;
+            border-bottom: 2px solid #dcdcdc;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #5f5f5f;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        
+        th {
+            background: #f2f2f2;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid #dcdcdc;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .brand-col {
+            font-weight: 600;
+            min-width: 120px;
+            background: #fafafa;
+        }
+        
+        .status-yes {
+            background: #d4f2bd;
+            color: #037f2d;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status-no {
+            background: #f2d4bd;
+            color: #cc0d00;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status-partial {
+            background: #f2e7bd;
+            color: #eaaa17;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status-inconsistent {
+            background: #bdd0f2;
+            color: #0d55d9;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00249e;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #767676;
+            margin-top: 5px;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #eaaa17;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        
+        .priority-high {
+            border-left: 4px solid #cc0d00;
+        }
+        
+        .priority-medium {
+            border-left: 4px solid #eaaa17;
+        }
+        
+        .priority-low {
+            border-left: 4px solid #0d55d9;
+        }
+        
+        .scrollable {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        
+        .summary-box {
+            background: #f5f8ff;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .inline-code {
+            background: #f2f2f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Design System Audit Visualization</h1>
+        <p style="color: #767676; margin-bottom: 30px;">Visual representation of gaps, inconsistencies, and mistakes across 12 brand/platform combinations</p>
+        
+        <div class="statistics">
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Total Brands</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">~200+</div>
+                <div class="stat-label">Properties per Brand</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">60-70%</div>
+                <div class="stat-label">Common Coverage</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Critical Gaps</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box status-yes"></div>
+                <span>Present/Complete</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box status-no"></div>
+                <span>Missing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box status-partial"></div>
+                <span>Partial/Incomplete</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box status-inconsistent"></div>
+                <span>Inconsistent Naming</span>
+            </div>
+        </div>
+        
+        <!-- Theme Coverage -->
+        <div class="section">
+            <h2>1. Theme Coverage Matrix</h2>
+            <p>Shows which theme variants each brand supports. <span class="inline-code">light</span>/<span class="inline-code">dark</span> is standard; <span class="inline-code">dynamic</span> and <span class="inline-code">brand</span> are optional.</p>
+            
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>light</th>
+                            <th>dark</th>
+                            <th>dynamic</th>
+                            <th>brand</th>
+                            <th>default</th>
+                            <th>solid</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Standard naming</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-inconsistent">✓</td>
+                            <td class="status-inconsistent">✓</td>
+                            <td>Uses default/solid (inconsistent)</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-inconsistent">✓</td>
+                            <td class="status-no">✗</td>
+                            <td>Missing dark variant</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Has extra "tokens" wrapper</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Has brand variant</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Complete</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="note priority-high">
+                <strong>Critical Issues:</strong> cBSDigitalCTV uses "default/solid" instead of "light/dark". entertainmentWeb missing dark variant. fantasyApp has unnecessary "tokens" wrapper.
+            </div>
+        </div>
+        
+        <!-- Button State Coverage -->
+        <div class="section">
+            <h2>2. Button State Coverage</h2>
+            <p>Shows which button states (hover, focus, disabled, loading) are implemented across brands.</p>
+            
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>Hover States</th>
+                            <th>Focus States</th>
+                            <th>Disabled States</th>
+                            <th>Loading States</th>
+                            <th>Destructive Buttons</th>
+                            <th>Toggle Buttons</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td>Missing focus states</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td>Minimal button system</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td>Incomplete button props</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td>Missing hover/focus</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Present</td>
+                            <td>Most complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Present</td>
+                            <td>Has destructive</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Present</td>
+                            <td>Has toggle</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td>Missing focus/loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td>Missing focus/loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-inconsistent">Inconsistent</td>
+                            <td>Toggle naming issue</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-inconsistent">Inconsistent</td>
+                            <td>Toggle naming issue</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">Missing</td>
+                            <td class="status-yes">Complete</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Present</td>
+                            <td class="status-yes">Present</td>
+                            <td>Has destructive</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="note priority-high">
+                <strong>Critical Gap:</strong> Only 3 brands (fantasyWeb, newsWebFly, sportsWebFly) have focus states, which are required for accessibility compliance.
+            </div>
+        </div>
+        
+        <!-- Property Naming Inconsistencies -->
+        <div class="section">
+            <h2>3. Property Naming Patterns</h2>
+            <p>Shows inconsistent naming conventions across brands for common properties.</p>
+            
+            <h3>Button Property Naming</h3>
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>Pattern</th>
+                            <th>Example</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td>Pattern B</td>
+                            <td><span class="inline-code">buttonBackground</span></td>
+                            <td class="status-inconsistent">Non-standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td>Pattern C</td>
+                            <td><span class="inline-code">buttonPrimaryText</span> (no Background)</td>
+                            <td class="status-inconsistent">Incomplete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td>Pattern A</td>
+                            <td><span class="inline-code">buttonPrimaryBackground</span></td>
+                            <td class="status-yes">Standard</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3>Text Link Naming</h3>
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>Primary Link</th>
+                            <th>Secondary Link</th>
+                            <th>Hover State</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td><span class="inline-code">textLink</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-inconsistent">Non-standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td><span class="inline-code">textLinkSecondary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td><span class="inline-code">textLinkSecondary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td><span class="inline-code">textLinkPrimary</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td><span class="inline-code">textLink</span></td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-inconsistent">Non-standard</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3>Overlay Property Naming Chaos</h3>
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>Solid Overlay</th>
+                            <th>Gradient Overlays</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td><span class="inline-code">cardOverlayBottom</span></td>
+                            <td><span class="inline-code">cardOverlayBrand</span></td>
+                            <td class="status-inconsistent">Unique naming</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td><span class="inline-code">overlaysSolid</span></td>
+                            <td><span class="inline-code">overlayLinearPrimary</span>, <span class="inline-code">overlayLinearSecondary</span></td>
+                            <td class="status-inconsistent">Non-standard</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td class="status-no">✗</td>
+                            <td><span class="inline-code">surfaceOverlayLinearFull</span>, <span class="inline-code">surfaceOverlayLinearHalf</span></td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td class="status-no">✗</td>
+                            <td><span class="inline-code">surfaceOverlayLinearFull</span>, <span class="inline-code">surfaceOverlayLinearHalf</span></td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td class="status-no">✗</td>
+                            <td><span class="inline-code">surfaceOverlayLinearFull</span>, <span class="inline-code">surfaceOverlayLinearHalf</span></td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td class="status-no">✗</td>
+                            <td><span class="inline-code">surfaceOverlayLinearFull</span>, <span class="inline-code">surfaceOverlayLinearHalf</span></td>
+                            <td class="status-partial">Partial</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td><span class="inline-code">surfaceOverlaySolid</span></td>
+                            <td><span class="inline-code">surfaceOverlayTopGradient</span>, <span class="inline-code">surfaceOverlayBottomGradient</span></td>
+                            <td class="status-inconsistent">Different naming</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="note priority-high">
+                <strong>Critical Issue:</strong> Overlay properties use 5+ different naming patterns. This is a major inconsistency that should be unified immediately.
+            </div>
+        </div>
+        
+        <!-- Elevation System -->
+        <div class="section">
+            <h2>4. Elevation/Shadow System Coverage</h2>
+            <p>Shows how elevation properties are implemented across brands.</p>
+            
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>System Type</th>
+                            <th>Properties</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td>None</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td>Partial Numbered</td>
+                            <td><span class="inline-code">elevation5</span>, <span class="inline-code">elevation20</span></td>
+                            <td class="status-partial">Incomplete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td>None</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td>None</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">Missing</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td>Semantic</td>
+                            <td><span class="inline-code">elevationRaised</span>, <span class="inline-code">elevationNavigation</span>, <span class="inline-code">elevationModal</span></td>
+                            <td class="status-yes">Present</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td>Semantic</td>
+                            <td><span class="inline-code">elevationRaised</span>, <span class="inline-code">elevationNavigation</span>, <span class="inline-code">elevationModal</span></td>
+                            <td class="status-yes">Present</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td>Basic</td>
+                            <td><span class="inline-code">elevation</span></td>
+                            <td class="status-partial">Single value</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td>Basic</td>
+                            <td><span class="inline-code">elevation</span></td>
+                            <td class="status-partial">Single value</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td>Basic</td>
+                            <td><span class="inline-code">elevation</span></td>
+                            <td class="status-partial">Single value</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td>Numbered</td>
+                            <td><span class="inline-code">elevation0</span> through <span class="inline-code">elevation50</span></td>
+                            <td class="status-yes">Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td>Numbered</td>
+                            <td><span class="inline-code">elevation0</span> through <span class="inline-code">elevation50</span></td>
+                            <td class="status-yes">Complete</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td>Semantic</td>
+                            <td><span class="inline-code">elevationRaised</span>, <span class="inline-code">elevationNavigation</span>, <span class="inline-code">elevationModal</span></td>
+                            <td class="status-yes">Present</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="note priority-medium">
+                <strong>Issue:</strong> Three different elevation systems in use (semantic, numbered, basic). Need to standardize on one approach.
+            </div>
+        </div>
+        
+        <!-- Missing Properties Summary -->
+        <div class="section">
+            <h2>5. Missing Properties Summary</h2>
+            <p>Quick reference of critical missing properties by brand.</p>
+            
+            <div class="scrollable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="brand-col">Brand</th>
+                            <th>Missing Dark Theme</th>
+                            <th>Missing Focus States</th>
+                            <th>Missing Elevation</th>
+                            <th>Missing Loading States</th>
+                            <th>Missing Destructive</th>
+                            <th>Critical Gaps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="brand-col">247SportsWeb</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td>Focus, Elevation</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">cBSDigitalCTV</td>
+                            <td class="status-inconsistent">Inconsistent</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Theme naming, Focus, Loading, Many states</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">entertainmentWeb</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Dark theme, Focus, Elevation, Loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyApp</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Focus, Elevation, Loading, Hover states</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">fantasyWeb</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td>Destructive (optional)</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsApp</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td>Focus</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsLineWeb</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td>Focus, Elevation system</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebBison</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Focus, Elevation system, Loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebBison</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-partial">Partial</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Focus, Elevation system, Loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsWebFly</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">sportsWebFly</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-no">✗</td>
+                            <td>Loading</td>
+                        </tr>
+                        <tr>
+                            <td class="brand-col">newsApp</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-no">✗</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td class="status-yes">✓</td>
+                            <td>Focus</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Priority Actions -->
+        <div class="section">
+            <h2>6. Priority Action Items</h2>
+            
+            <h3 class="priority-high">High Priority</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li style="margin-bottom: 8px;">✅ <strong>Standardize theme naming</strong>: Migrate cBSDigitalCTV and entertainmentWeb to light/dark</li>
+                <li style="margin-bottom: 8px;">✅ <strong>Unify overlay property naming</strong>: Critical inconsistency affecting 5+ brands</li>
+                <li style="margin-bottom: 8px;">✅ <strong>Add focus states</strong>: Only 3/12 brands have them (accessibility requirement)</li>
+                <li style="margin-bottom: 8px;">✅ <strong>Complete button state coverage</strong>: Add hover/focus/disabled/loading where missing</li>
+                <li style="margin-bottom: 8px;">✅ <strong>Standardize elevation system</strong>: Choose one approach (numbered vs semantic)</li>
+            </ul>
+            
+            <h3 class="priority-medium">Medium Priority</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li style="margin-bottom: 8px;">⚠️ Add dark theme to entertainmentWeb</li>
+                <li style="margin-bottom: 8px;">⚠️ Remove "tokens" wrapper from fantasyApp</li>
+                <li style="margin-bottom: 8px;">⚠️ Standardize table properties across all brands</li>
+                <li style="margin-bottom: 8px;">⚠️ Standardize text link naming and add missing states</li>
+            </ul>
+            
+            <h3 class="priority-low">Low Priority</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li style="margin-bottom: 8px;">📝 Document brand-specific extensions (fantasy gradients, SportsLine odds)</li>
+                <li style="margin-bottom: 8px;">📝 Create base color palette from common values</li>
+                <li style="margin-bottom: 8px;">📝 Fix capitalization inconsistencies (brandSportsline vs brandSportsLine)</li>
+            </ul>
+        </div>
+        
+        <div class="summary-box">
+            <h3>Summary</h3>
+            <p>This visualization shows that while most brands follow similar patterns, there are critical gaps in:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Accessibility</strong>: Only 25% of brands have focus states</li>
+                <li><strong>Consistency</strong>: Overlay naming has 5+ different patterns</li>
+                <li><strong>Completeness</strong>: Several brands missing dark themes, elevation systems, and button states</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Recommendation:</strong> Prioritize focus states (accessibility) and overlay naming unification (consistency) as these affect all users and developers.</p>
+        </div>
+    </div>
+</body>
+</html>
